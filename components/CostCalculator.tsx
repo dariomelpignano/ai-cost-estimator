@@ -1,9 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { AIModel, CostEstimate } from '@/types';
+import { CostEstimate } from '@/types';
 import { calculateCost, formatCurrency } from '@/lib/calculations';
 import { shouldAutoUpdate, markPricingUpdated } from '@/lib/pricingStorage';
+import { useModels } from '@/lib/useModels';
 import ModelSelector from './ModelSelector';
 import FolderUpload from './FolderUpload';
 import ExportButton from './ExportButton';
@@ -25,29 +26,12 @@ import {
 type InputMode = 'manual' | 'folder';
 
 export default function CostCalculator() {
-  const [models, setModels] = useState<AIModel[]>([]);
+  const { models, loading, bulkUpdatePrices } = useModels();
   const [selectedModelId, setSelectedModelId] = useState('');
   const [inputTokens, setInputTokens] = useState<number>(0);
   const [outputTokens, setOutputTokens] = useState<number>(0);
   const [estimate, setEstimate] = useState<CostEstimate | null>(null);
-  const [loading, setLoading] = useState(true);
   const [inputMode, setInputMode] = useState<InputMode>('manual');
-
-  const fetchModels = async () => {
-    try {
-      const res = await fetch('/api/models');
-      const data = await res.json();
-      setModels(data);
-    } catch (err) {
-      console.error('Failed to load models:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchModels();
-  }, []);
 
   // Auto-update pricing if stale (>24 hours)
   useEffect(() => {
@@ -58,9 +42,14 @@ export default function CostCalculator() {
           const data = await res.json();
           if (data.success) {
             markPricingUpdated();
-            // Refresh models if there were changes
-            if (data.changes && data.changes.length > 0) {
-              await fetchModels();
+            // Store price updates in localStorage
+            if (data.updatedModels && data.changes && data.changes.length > 0) {
+              const updates = data.updatedModels.map((m: { id: string; inputCostPerMillion: number; outputCostPerMillion: number }) => ({
+                id: m.id,
+                inputCostPerMillion: m.inputCostPerMillion,
+                outputCostPerMillion: m.outputCostPerMillion,
+              }));
+              bulkUpdatePrices(updates);
             }
           }
         } catch (err) {
@@ -70,7 +59,7 @@ export default function CostCalculator() {
     };
 
     checkAndUpdatePricing();
-  }, []);
+  }, [bulkUpdatePrices]);
 
   useEffect(() => {
     if (selectedModelId && (inputTokens > 0 || outputTokens > 0)) {

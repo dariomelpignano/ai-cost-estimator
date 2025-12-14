@@ -16,12 +16,12 @@ import {
 import {
   formatLastUpdate,
   markPricingUpdated,
-  getPricingMetadata
 } from '@/lib/pricingStorage';
 import { PricingChangeLog } from '@/lib/pricingFetcher';
+import { AIModel } from '@/types';
 
 interface PricingUpdateButtonProps {
-  onUpdate?: () => void;
+  onPriceUpdate?: (updates: Array<{ id: string; inputCostPerMillion: number; outputCostPerMillion: number }>) => void;
 }
 
 interface UpdateResult {
@@ -30,7 +30,7 @@ interface UpdateResult {
   errors: string[];
 }
 
-export default function PricingUpdateButton({ onUpdate }: PricingUpdateButtonProps) {
+export default function PricingUpdateButton({ onPriceUpdate }: PricingUpdateButtonProps) {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<UpdateResult | null>(null);
   const [lastUpdate, setLastUpdate] = useState<string>('');
@@ -55,12 +55,20 @@ export default function PricingUpdateButton({ onUpdate }: PricingUpdateButtonPro
       });
 
       if (data.success) {
+        // Store price updates in localStorage via the hook
+        if (data.updatedModels && onPriceUpdate) {
+          const updates = (data.updatedModels as AIModel[]).map((m) => ({
+            id: m.id,
+            inputCostPerMillion: m.inputCostPerMillion,
+            outputCostPerMillion: m.outputCostPerMillion,
+          }));
+          onPriceUpdate(updates);
+        }
         markPricingUpdated();
         setLastUpdate(formatLastUpdate());
         if (data.changes.length > 0) {
           setShowChanges(true);
         }
-        onUpdate?.();
       }
     } catch (error) {
       setResult({

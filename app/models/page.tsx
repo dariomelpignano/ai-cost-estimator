@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import { AIModel } from '@/types';
 import ModelList from '@/components/ModelList';
@@ -14,72 +14,37 @@ import {
   Database,
   Loader2
 } from 'lucide-react';
+import { useModels } from '@/lib/useModels';
 
 export default function ModelsPage() {
-  const [models, setModels] = useState<AIModel[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { models, loading, addModel, updateModel, deleteModel, bulkUpdatePrices } = useModels();
   const [showForm, setShowForm] = useState(false);
   const [editingModel, setEditingModel] = useState<AIModel | null>(null);
 
-  const fetchModels = async () => {
-    try {
-      const res = await fetch('/api/models');
-      const data = await res.json();
-      setModels(data);
-    } catch (error) {
-      console.error('Failed to fetch models:', error);
-    } finally {
-      setLoading(false);
+  const handleAddModel = (modelData: Partial<AIModel>) => {
+    if (!modelData.name || !modelData.provider ||
+        modelData.inputCostPerMillion === undefined ||
+        modelData.outputCostPerMillion === undefined) {
+      return;
     }
+    addModel({
+      name: modelData.name,
+      provider: modelData.provider,
+      inputCostPerMillion: modelData.inputCostPerMillion,
+      outputCostPerMillion: modelData.outputCostPerMillion,
+    });
+    setShowForm(false);
   };
 
-  useEffect(() => {
-    fetchModels();
-  }, []);
-
-  const handleAddModel = async (modelData: Partial<AIModel>) => {
-    try {
-      const res = await fetch('/api/models', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(modelData),
-      });
-      if (res.ok) {
-        await fetchModels();
-        setShowForm(false);
-      }
-    } catch (error) {
-      console.error('Failed to add model:', error);
-    }
-  };
-
-  const handleUpdateModel = async (modelData: Partial<AIModel>) => {
+  const handleUpdateModel = (modelData: Partial<AIModel>) => {
     if (!editingModel) return;
-    try {
-      const res = await fetch(`/api/models/${editingModel.id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(modelData),
-      });
-      if (res.ok) {
-        await fetchModels();
-        setEditingModel(null);
-      }
-    } catch (error) {
-      console.error('Failed to update model:', error);
-    }
+    updateModel(editingModel.id, modelData);
+    setEditingModel(null);
   };
 
-  const handleDeleteModel = async (id: string) => {
+  const handleDeleteModel = (id: string) => {
     if (!confirm('Are you sure you want to delete this model?')) return;
-    try {
-      const res = await fetch(`/api/models/${id}`, { method: 'DELETE' });
-      if (res.ok) {
-        await fetchModels();
-      }
-    } catch (error) {
-      console.error('Failed to delete model:', error);
-    }
+    deleteModel(id);
   };
 
   const handleEdit = (model: AIModel) => {
@@ -152,7 +117,7 @@ export default function ModelsPage() {
         {/* Pricing Update */}
         <Card>
           <CardContent className="pt-4">
-            <PricingUpdateButton onUpdate={fetchModels} />
+            <PricingUpdateButton onPriceUpdate={bulkUpdatePrices} />
           </CardContent>
         </Card>
 
