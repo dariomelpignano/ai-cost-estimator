@@ -1,0 +1,148 @@
+{
+  "models": [
+    {
+      "id": "gpt-4o",
+      "name": "GPT-4o",
+      "provider": "OpenAI",
+      "inputCostPerMillion": 2.5,
+      "outputCostPerMillion": 10,
+      "isCustom": false
+    },
+    {
+      "id": "gpt-4o-mini",
+      "name": "GPT-4o Mini",
+      "provider": "OpenAI",
+      "inputCostPerMillion": 0.15,
+      "outputCostPerMillion": 0.6,
+      "isCustom": false
+    },
+    {
+      "id": "gpt-4-turbo",
+      "name": "GPT-4 Turbo",
+      "provider": "OpenAI",
+      "inputCostPerMillion": 10,
+      "outputCostPerMillion": 30,
+      "isCustom": false
+    },
+    {
+      "id": "o1",
+      "name": "o1",
+      "provider": "OpenAI",
+      "inputCostPerMillion": 15,
+      "outputCostPerMillion": 60,
+      "isCustom": false
+    },
+    {
+      "id": "o1-mini",
+      "name": "o1-mini",
+      "provider": "OpenAI",
+      "inputCostPerMillion": 3,
+      "outputCostPerMillion": 12,
+      "isCustom": false
+    },
+    {
+      "id": "gpt-5-2",
+      "name": "GPT-5.2",
+      "provider": "OpenAI",
+      "inputCostPerMillion": 5,
+      "outputCostPerMillion": 15,
+      "isCustom": false
+    },
+    {
+      "id": "claude-3-5-sonnet",
+      "name": "Claude 3.5 Sonnet",
+      "provider": "Anthropic",
+      "inputCostPerMillion": 3,
+      "outputCostPerMillion": 15,
+      "isCustom": false
+    },
+    {
+      "id": "claude-3-5-haiku",
+      "name": "Claude 3.5 Haiku",
+      "provider": "Anthropic",
+      "inputCostPerMillion": 0.8,
+      "outputCostPerMillion": 4,
+      "isCustom": false
+    },
+    {
+      "id": "claude-3-opus",
+      "name": "Claude 3 Opus",
+      "provider": "Anthropic",
+      "inputCostPerMillion": 15,
+      "outputCostPerMillion": 75,
+      "isCustom": false
+    },
+    {
+      "id": "claude-opus-4-5",
+      "name": "Claude Opus 4.5",
+      "provider": "Anthropic",
+      "inputCostPerMillion": 15,
+      "outputCostPerMillion": 75,
+      "isCustom": false
+    },
+    {
+      "id": "gemini-1-5-pro",
+      "name": "Gemini 1.5 Pro",
+      "provider": "Google",
+      "inputCostPerMillion": 1.25,
+      "outputCostPerMillion": 5,
+      "isCustom": false
+    },
+    {
+      "id": "gemini-1-5-flash",
+      "name": "Gemini 1.5 Flash",
+      "provider": "Google",
+      "inputCostPerMillion": 0.075,
+      "outputCostPerMillion": 0.3,
+      "isCustom": false
+    },
+    {
+      "id": "gemini-2-0-flash",
+      "name": "Gemini 2.0 Flash",
+      "provider": "Google",
+      "inputCostPerMillion": 0.1,
+      "outputCostPerMillion": 0.4,
+      "isCustom": false
+    },
+    {
+      "id": "gemini-3-pro",
+      "name": "Gemini 3 Pro",
+      "provider": "Google",
+      "inputCostPerMillion": 2.5,
+      "outputCostPerMillion": 10,
+      "isCustom": false
+    },
+    {
+      "id": "llama-3-1-405b",
+      "name": "Llama 3.1 405B",
+      "provider": "Meta",
+      "inputCostPerMillion": 3,
+      "outputCostPerMillion": 3,
+      "isCustom": false
+    },
+    {
+      "id": "llama-3-1-70b",
+      "name": "Llama 3.1 70B",
+      "provider": "Meta",
+      "inputCostPerMillion": 0.88,
+      "outputCostPerMillion": 0.88,
+      "isCustom": false
+    },
+    {
+      "id": "mistral-large",
+      "name": "Mistral Large",
+      "provider": "Mistral",
+      "inputCostPerMillion": 2,
+      "outputCostPerMillion": 6,
+      "isCustom": false
+    },
+    {
+      "id": "mistral-small",
+      "name": "Mistral Small",
+      "provider": "Mistral",
+      "inputCostPerMillion": 0.2,
+      "outputCostPerMillion": 0.6,
+      "isCustom": false
+    }
+  ]
+}
