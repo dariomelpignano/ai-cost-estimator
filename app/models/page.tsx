@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { AIModel } from '@/types';
 import ModelList from '@/components/ModelList';
 import ModelForm from '@/components/ModelForm';
+import PricingUpdateButton from '@/components/PricingUpdateButton';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
@@ -148,6 +149,13 @@ export default function ModelsPage() {
 
       {/* Main Content */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 space-y-6 animate-fadeIn">
+        {/* Pricing Update */}
+        <Card>
+          <CardContent className="pt-4">
+            <PricingUpdateButton onUpdate={fetchModels} />
+          </CardContent>
+        </Card>
+
         {/* Form */}
         {(showForm || editingModel) && (
           <Card className="animate-slideUp">

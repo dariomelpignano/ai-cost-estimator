@@ -78,3 +78,7 @@ export function getModelsByProvider(): Record<string, AIModel[]> {
     return acc;
   }, {} as Record<string, AIModel[]>);
 }
+
+export function bulkUpdateModels(models: AIModel[]): void {
+  saveModels(models);
+}

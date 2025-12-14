@@ -9,9 +9,11 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "cheerio": "^1.1.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "js-tiktoken": "^1.0.21",
+    "jspdf": "^3.0.4",
     "lucide-react": "^0.561.0",
     "mammoth": "^1.11.0",
     "next": "16.0.10",

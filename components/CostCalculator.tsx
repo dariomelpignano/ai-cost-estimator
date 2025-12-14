@@ -3,8 +3,10 @@
 import { useState, useEffect } from 'react';
 import { AIModel, CostEstimate } from '@/types';
 import { calculateCost, formatCurrency } from '@/lib/calculations';
+import { shouldAutoUpdate, markPricingUpdated } from '@/lib/pricingStorage';
 import ModelSelector from './ModelSelector';
 import FolderUpload from './FolderUpload';
+import ExportButton from './ExportButton';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -31,17 +33,43 @@ export default function CostCalculator() {
   const [loading, setLoading] = useState(true);
   const [inputMode, setInputMode] = useState<InputMode>('manual');
 
+  const fetchModels = async () => {
+    try {
+      const res = await fetch('/api/models');
+      const data = await res.json();
+      setModels(data);
+    } catch (err) {
+      console.error('Failed to load models:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    fetch('/api/models')
-      .then((res) => res.json())
-      .then((data) => {
-        setModels(data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error('Failed to load models:', err);
-        setLoading(false);
-      });
+    fetchModels();
+  }, []);
+
+  // Auto-update pricing if stale (>24 hours)
+  useEffect(() => {
+    const checkAndUpdatePricing = async () => {
+      if (shouldAutoUpdate()) {
+        try {
+          const res = await fetch('/api/pricing-update', { method: 'POST' });
+          const data = await res.json();
+          if (data.success) {
+            markPricingUpdated();
+            // Refresh models if there were changes
+            if (data.changes && data.changes.length > 0) {
+              await fetchModels();
+            }
+          }
+        } catch (err) {
+          console.error('Auto-update pricing failed:', err);
+        }
+      }
+    };
+
+    checkAndUpdatePricing();
   }, []);
 
   useEffect(() => {
@@ -210,13 +238,16 @@ export default function CostCalculator() {
       {estimate ? (
         <Card className="border-primary/20 bg-primary/5 animate-slideUp">
           <CardHeader className="pb-3">
-            <CardTitle className="text-base font-medium flex items-center gap-2">
-              <DollarSign className="h-4 w-4" />
-              Cost Estimate
-              <span className="font-normal text-sm text-muted-foreground">
-                ({estimate.model.name})
-              </span>
-            </CardTitle>
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-base font-medium flex items-center gap-2">
+                <DollarSign className="h-4 w-4" />
+                Cost Estimate
+                <span className="font-normal text-sm text-muted-foreground">
+                  ({estimate.model.name})
+                </span>
+              </CardTitle>
+              <ExportButton estimate={estimate} />
+            </div>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
